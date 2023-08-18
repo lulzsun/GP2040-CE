@@ -38,9 +38,9 @@
 class MatrixInput : public GPAddon {
 public:
 	virtual bool available();
-	virtual void setup();       // Matrix Setup
-	virtual void process();     // Matrix Process
-	virtual void preprocess() {}
+	virtual void setup();
+	virtual void process() {}
+	virtual void preprocess();
 	virtual std::string name() { return MatrixName; }
 };
 

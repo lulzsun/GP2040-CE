@@ -32,7 +32,7 @@ void MatrixInput::setup() {
 	}
 }
 
-void MatrixInput::process() {
+void MatrixInput::preprocess() {
 	Gamepad* gamepad = Storage::getInstance().GetGamepad();
 	const PinMappings& pinMappings = Storage::getInstance().getProfilePinMappings();
 	const MatrixOptions& matrixOptions = Storage::getInstance().getAddonOptions().matrixOptions;

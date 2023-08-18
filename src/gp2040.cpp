@@ -58,7 +58,7 @@ void GP2040::setup() {
 	if (matrixEnabled) {
 		MatrixInput * tempBootMatrixInput = new MatrixInput();
 		tempBootMatrixInput->setup();
-		tempBootMatrixInput->process();
+		tempBootMatrixInput->preprocess();
 		delete tempBootMatrixInput;
 	}
 
