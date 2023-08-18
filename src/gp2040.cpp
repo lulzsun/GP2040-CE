@@ -24,6 +24,7 @@
 #include "addons/slider_socd.h"
 #include "addons/wiiext.h"
 #include "addons/snes_input.h"
+#include "addons/matrix.h"
 
 // Pico includes
 #include "pico/bootrom.h"
@@ -52,7 +53,16 @@ void GP2040::setup() {
 	Gamepad * gamepad = Storage::getInstance().GetGamepad();
 	gamepad->setup();
 
-	const BootAction bootAction = getBootAction();
+	// Temporarily setup matrix input (if enabled) to get button inputs
+	const bool matrixEnabled = Storage::getInstance().getAddonOptions().matrixOptions.enabled;
+	if (matrixEnabled) {
+		MatrixInput * tempBootMatrixInput = new MatrixInput();
+		tempBootMatrixInput->setup();
+		tempBootMatrixInput->process();
+		delete tempBootMatrixInput;
+	}
+
+	const BootAction bootAction = getBootAction(matrixEnabled);
 	switch (bootAction) {
 		case BootAction::ENTER_WEBCONFIG_MODE:
 			{
@@ -118,6 +128,7 @@ void GP2040::setup() {
 	addons.LoadAddon(new PlayerNumAddon(), CORE0_USBREPORT);
 	addons.LoadAddon(new SliderSOCDInput(), CORE0_INPUT);
 	addons.LoadAddon(new TiltInput(), CORE0_INPUT);
+	addons.LoadAddon(new MatrixInput(), CORE0_INPUT);
 }
 
 void GP2040::run() {
@@ -175,7 +186,7 @@ void GP2040::run() {
 	}
 }
 
-GP2040::BootAction GP2040::getBootAction() {
+GP2040::BootAction GP2040::getBootAction(bool matrixEnabled) {
 	switch (System::takeBootMode()) {
 		case System::BootMode::GAMEPAD: return BootAction::NONE;
 		case System::BootMode::WEBCONFIG: return BootAction::ENTER_WEBCONFIG_MODE;
@@ -184,7 +195,7 @@ GP2040::BootAction GP2040::getBootAction() {
 			{
 				// Determine boot action based on gamepad state during boot
 				Gamepad * gamepad = Storage::getInstance().GetGamepad();
-				gamepad->read();
+				if (!matrixEnabled) gamepad->read();
 
 				ForcedSetupOptions& forcedSetupOptions = Storage::getInstance().getForcedSetupOptions();
 				bool modeSwitchLocked = forcedSetupOptions.mode == FORCED_SETUP_MODE_LOCK_MODE_SWITCH ||

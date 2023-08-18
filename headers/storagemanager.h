@@ -39,6 +39,7 @@ public:
 	ForcedSetupOptions& getForcedSetupOptions() { return config.forcedSetupOptions; }
 	PinMappings& getPinMappings() { return config.pinMappings; }
 	KeyboardMapping& getKeyboardMapping() { return config.keyboardMapping; }
+	MatrixOptions& getMatrixOptions() { return config.matrixOptions; }
 	DisplayOptions& getDisplayOptions() { return config.displayOptions; }
 	DisplayOptions& getPreviewDisplayOptions() { return previewDisplayOptions; }
 	LEDOptions& getLedOptions() { return config.ledOptions; }

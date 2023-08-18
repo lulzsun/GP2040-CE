@@ -30,6 +30,7 @@
 #include "addons/turbo.h"
 #include "addons/wiiext.h"
 #include "addons/snes_input.h"
+#include "addons/matrix.h"
 
 #include "CRC32.h"
 #include "FlashPROM.h"
@@ -483,6 +484,17 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
     INIT_UNSET_PROPERTY(config.addonOptions.snesOptions, clockPin, SNES_PAD_CLOCK_PIN);
     INIT_UNSET_PROPERTY(config.addonOptions.snesOptions, latchPin, SNES_PAD_LATCH_PIN);
     INIT_UNSET_PROPERTY(config.addonOptions.snesOptions, dataPin, SNES_PAD_DATA_PIN);
+
+    // addonOptions.matrixOptions
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, enabled, !!MATRIX_ENABLED);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixRows, MATRIX_ROWS);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixCols, MATRIX_COLS);
+    const uint8_t rowPins[] = MATRIX_ROW_PINS;
+    const uint8_t colPins[] = MATRIX_COL_PINS;
+    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, matrixRowPins, rowPins);
+    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, matrixColPins, colPins);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixScanDelay, MATRIX_SCAN_DELAY);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixReverseDiode, !!MATRIX_REVERSE_DIODE);
 
     // keyboardMapping
     INIT_UNSET_PROPERTY(config.addonOptions.keyboardHostOptions, enabled, KEYBOARD_HOST_ENABLED);
