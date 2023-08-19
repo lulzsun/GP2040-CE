@@ -12,22 +12,22 @@ void MatrixInput::setup() {
 
 	if (matrixOptions.matrixRows == 0 || matrixOptions.matrixCols == 0) return;
 
-	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
 	const uint8_t* matrixColPins = reinterpret_cast<const uint8_t*>
 		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixRowPins.bytes : matrixOptions.matrixColPins.bytes));
+	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
 
-	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
 	const int colLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixRows : matrixOptions.matrixCols);
+	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
 
-	for (int i = 0; i < rowLength; i++) {
-		gpio_init(matrixRowPins[i]);             	// Initialize pin
-		gpio_set_dir(matrixRowPins[i], GPIO_OUT); 	// Set as OUTPUT
-	}
 	for (int i = 0; i < colLength; i++) {
-		gpio_init(matrixColPins[i]);				// Initialize pin
-		gpio_set_dir(matrixColPins[i], GPIO_IN);	// Set as INPUT
-		gpio_pull_up(matrixColPins[i]);         	// Set as PULLUP
+		gpio_init(matrixColPins[i]);             	// Initialize pin
+		gpio_set_dir(matrixColPins[i], GPIO_OUT); 	// Set as OUTPUT
+	}
+	for (int i = 0; i < rowLength; i++) {
+		gpio_init(matrixRowPins[i]);				// Initialize pin
+		gpio_set_dir(matrixRowPins[i], GPIO_IN);	// Set as INPUT
+		gpio_pull_up(matrixRowPins[i]);         	// Set as PULLUP
 	}
 }
 
@@ -38,24 +38,24 @@ void MatrixInput::preprocess() {
 
 	if (matrixOptions.matrixRows == 0 || matrixOptions.matrixCols == 0) return;
 
-	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
 	const uint8_t* matrixColPins = reinterpret_cast<const uint8_t*>
 		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixRowPins.bytes : matrixOptions.matrixColPins.bytes));
+	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
 
-	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
 	const int colLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixRows : matrixOptions.matrixCols);
+	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
 
 	uint32_t values = 0;
 	int pressed = 0;
 
-	for (int row = 0; row < rowLength; row++) {
-		gpio_put(matrixRowPins[row], 0);
-		for (int col = 0; col < colLength; col++) {
-			if (!gpio_get(matrixColPins[col])) values |= 1 << pressed;
+	for (int col = 0; col < colLength; col++) {
+		gpio_put(matrixColPins[col], 0);
+		for (int row = 0; row < rowLength; row++) {
+			if (!gpio_get(matrixRowPins[row])) values |= 1 << pressed;
 			pressed++;
 		}
-		gpio_put(matrixRowPins[row], 1);
+		gpio_put(matrixColPins[col], 1);
 		busy_wait_us_32(matrixOptions.matrixScanDelay);
 	}
 
