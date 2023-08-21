@@ -189,7 +189,7 @@ void GP2040::run() {
 	}
 }
 
-GP2040::BootAction GP2040::getBootAction(bool matrixEnabled) {
+GP2040::BootAction GP2040::getBootAction() {
 	switch (System::takeBootMode()) {
 		case System::BootMode::GAMEPAD: return BootAction::NONE;
 		case System::BootMode::WEBCONFIG: return BootAction::ENTER_WEBCONFIG_MODE;
