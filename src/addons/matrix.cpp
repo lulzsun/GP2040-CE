@@ -60,17 +60,17 @@ void MatrixInput::preprocess() {
 		busy_wait_us_32(matrixOptions.scanDelay);
 	}
 
-	gamepad->state.aux = 0
+	gamepad->state.aux = gamepad->state.aux
 		| (values & (1 << MATRIX_BUTTON_FN)) ? AUX_MASK_FUNCTION : 0;
 
-	gamepad->state.dpad = 0
+	gamepad->state.dpad = gamepad->state.dpad
 		| ((values & (1 << MATRIX_DPAD_UP))    ? gamepad->mapDpadUp->buttonMask    : 0)
 		| ((values & (1 << MATRIX_DPAD_DOWN))  ? gamepad->mapDpadDown->buttonMask  : 0)
 		| ((values & (1 << MATRIX_DPAD_LEFT))  ? gamepad->mapDpadLeft->buttonMask  : 0)
 		| ((values & (1 << MATRIX_DPAD_RIGHT)) ? gamepad->mapDpadRight->buttonMask : 0)
 	;
 
-	gamepad->state.buttons = 0
+	gamepad->state.buttons = gamepad->state.buttons
 		| ((values & (1 << MATRIX_BUTTON_B1))  ? gamepad->mapButtonB1->buttonMask  : 0)
 		| ((values & (1 << MATRIX_BUTTON_B2))  ? gamepad->mapButtonB2->buttonMask  : 0)
 		| ((values & (1 << MATRIX_BUTTON_B3))  ? gamepad->mapButtonB3->buttonMask  : 0)
@@ -86,11 +86,4 @@ void MatrixInput::preprocess() {
 		| ((values & (1 << MATRIX_BUTTON_A1))  ? gamepad->mapButtonA1->buttonMask  : 0)
 		| ((values & (1 << MATRIX_BUTTON_A2))  ? gamepad->mapButtonA2->buttonMask  : 0)
 	;
-
-	gamepad->state.lx = GAMEPAD_JOYSTICK_MID;
-	gamepad->state.ly = GAMEPAD_JOYSTICK_MID;
-	gamepad->state.rx = GAMEPAD_JOYSTICK_MID;
-	gamepad->state.ry = GAMEPAD_JOYSTICK_MID;
-	gamepad->state.lt = 0;
-	gamepad->state.rt = 0;
 }
