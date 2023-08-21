@@ -459,12 +459,13 @@ message MatrixOptions
 {
 	optional bool enabled = 1;
 
-	optional uint32 matrixRows = 2;
-	optional uint32 matrixCols = 3;
-	optional bytes matrixRowPins = 4 [(nanopb).max_size = 64];
-	optional bytes matrixColPins = 5 [(nanopb).max_size = 64];
-	optional uint32 matrixScanDelay = 6;
-	optional bool matrixReverseDiode = 7;
+	optional uint32 rows = 2;
+	optional uint32 cols = 3;
+	optional bytes rowPins = 4 [(nanopb).max_size = 64];
+	optional bytes colPins = 5 [(nanopb).max_size = 64];
+	optional bytes layout = 6 [(nanopb).max_size = 64];
+	optional uint32 scanDelay = 7;
+	optional bool reverseDiode = 8;
 }
 
 message AddonOptions

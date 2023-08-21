@@ -10,24 +10,24 @@ bool MatrixInput::available() {
 void MatrixInput::setup() {
 	const MatrixOptions& matrixOptions = Storage::getInstance().getAddonOptions().matrixOptions;
 
-	if (matrixOptions.matrixRows == 0 || matrixOptions.matrixCols == 0) return;
+	if (matrixOptions.rows == 0 || matrixOptions.cols == 0) return;
 
-	const uint8_t* matrixColPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixRowPins.bytes : matrixOptions.matrixColPins.bytes));
-	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
+	const uint8_t* colPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.reverseDiode ? matrixOptions.rowPins.bytes : matrixOptions.colPins.bytes));
+	const uint8_t* rowPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.reverseDiode ? matrixOptions.colPins.bytes : matrixOptions.rowPins.bytes));
 
-	const int colLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixRows : matrixOptions.matrixCols);
-	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
+	const int colLength = (matrixOptions.reverseDiode ? matrixOptions.rows : matrixOptions.cols);
+	const int rowLength = (matrixOptions.reverseDiode ? matrixOptions.cols : matrixOptions.rows);
 
 	for (int i = 0; i < colLength; i++) {
-		gpio_init(matrixColPins[i]);             	// Initialize pin
-		gpio_set_dir(matrixColPins[i], GPIO_OUT); 	// Set as OUTPUT
+		gpio_init(colPins[i]);             	// Initialize pin
+		gpio_set_dir(colPins[i], GPIO_OUT); 	// Set as OUTPUT
 	}
 	for (int i = 0; i < rowLength; i++) {
-		gpio_init(matrixRowPins[i]);				// Initialize pin
-		gpio_set_dir(matrixRowPins[i], GPIO_IN);	// Set as INPUT
-		gpio_pull_up(matrixRowPins[i]);         	// Set as PULLUP
+		gpio_init(rowPins[i]);				// Initialize pin
+		gpio_set_dir(rowPins[i], GPIO_IN);	// Set as INPUT
+		gpio_pull_up(rowPins[i]);         	// Set as PULLUP
 	}
 }
 
@@ -36,27 +36,27 @@ void MatrixInput::preprocess() {
 	const PinMappings& pinMappings = Storage::getInstance().getProfilePinMappings();
 	const MatrixOptions& matrixOptions = Storage::getInstance().getAddonOptions().matrixOptions;
 
-	if (matrixOptions.matrixRows == 0 || matrixOptions.matrixCols == 0) return;
+	if (matrixOptions.rows == 0 || matrixOptions.cols == 0) return;
 
-	const uint8_t* matrixColPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixRowPins.bytes : matrixOptions.matrixColPins.bytes));
-	const uint8_t* matrixRowPins = reinterpret_cast<const uint8_t*>
-		((matrixOptions.matrixReverseDiode ? matrixOptions.matrixColPins.bytes : matrixOptions.matrixRowPins.bytes));
+	const uint8_t* colPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.reverseDiode ? matrixOptions.rowPins.bytes : matrixOptions.colPins.bytes));
+	const uint8_t* rowPins = reinterpret_cast<const uint8_t*>
+		((matrixOptions.reverseDiode ? matrixOptions.colPins.bytes : matrixOptions.rowPins.bytes));
 
-	const int colLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixRows : matrixOptions.matrixCols);
-	const int rowLength = (matrixOptions.matrixReverseDiode ? matrixOptions.matrixCols : matrixOptions.matrixRows);
+	const int colLength = (matrixOptions.reverseDiode ? matrixOptions.rows : matrixOptions.cols);
+	const int rowLength = (matrixOptions.reverseDiode ? matrixOptions.cols : matrixOptions.rows);
 
 	uint32_t values = 0;
 	int pressed = 0;
 
 	for (int col = 0; col < colLength; col++) {
-		gpio_put(matrixColPins[col], 0);
+		gpio_put(colPins[col], 0);
 		for (int row = 0; row < rowLength; row++) {
-			if (!gpio_get(matrixRowPins[row])) values |= 1 << pressed;
+			if (!gpio_get(rowPins[row])) values |= 1 << pressed;
 			pressed++;
 		}
-		gpio_put(matrixColPins[col], 1);
-		busy_wait_us_32(matrixOptions.matrixScanDelay);
+		gpio_put(colPins[col], 1);
+		busy_wait_us_32(matrixOptions.scanDelay);
 	}
 
 	gamepad->state.aux = 0

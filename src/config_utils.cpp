@@ -487,14 +487,16 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
 
     // addonOptions.matrixOptions
     INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, enabled, !!MATRIX_ENABLED);
-    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixRows, MATRIX_ROWS);
-    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixCols, MATRIX_COLS);
-    const uint8_t rowPins[] = MATRIX_ROW_PINS;
-    const uint8_t colPins[] = MATRIX_COL_PINS;
-    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, matrixRowPins, rowPins);
-    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, matrixColPins, colPins);
-    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixScanDelay, MATRIX_SCAN_DELAY);
-    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, matrixReverseDiode, !!MATRIX_REVERSE_DIODE);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, rows, MATRIX_ROWS);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, cols, MATRIX_COLS);
+    const uint8_t matrixRowPins[] = MATRIX_ROW_PINS;
+    const uint8_t matrixColPins[] = MATRIX_COL_PINS;
+    const uint8_t matrixLayout[] = MATRIX_LAYOUT;
+    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, rowPins, matrixRowPins);
+    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, colPins, matrixColPins);
+    INIT_UNSET_PROPERTY_BYTES(config.addonOptions.matrixOptions, layout, matrixLayout);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, scanDelay, MATRIX_SCAN_DELAY);
+    INIT_UNSET_PROPERTY(config.addonOptions.matrixOptions, reverseDiode, !!MATRIX_REVERSE_DIODE);
 
     // keyboardMapping
     INIT_UNSET_PROPERTY(config.addonOptions.keyboardHostOptions, enabled, KEYBOARD_HOST_ENABLED);
