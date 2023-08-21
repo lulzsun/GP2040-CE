@@ -60,8 +60,8 @@
 #define MATRIX_BUTTON_FN		18	// Hotkey Function
 #define MATRIX_BUTTON_TURBO		19	// Turbo
 #define MATRIX_BUTTON_REVERSE	20	// UDLR Reverse
-#define MATRIX_SLIDER_LS		21	// Left Stick Slider
-#define MATRIX_SLIDER_RS		22	// Right Stick Slider
+#define MATRIX_SLIDER_ONE		21	// Left Stick Slider
+#define MATRIX_SLIDER_TWO		22	// Right Stick Slider
 #define MATRIX_SLIDER_SOCD_ONE	23	// SOCD Slider Pin One
 #define MATRIX_SLIDER_SOCD_TWO	24	// SOCD Slider Pin Two
 
