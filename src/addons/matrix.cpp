@@ -22,7 +22,7 @@ void MatrixInput::setup() {
 
 	for (int i = 0; i < colLength; i++) {
 		gpio_init(colPins[i]);             	// Initialize pin
-		gpio_set_dir(colPins[i], GPIO_OUT); 	// Set as OUTPUT
+		gpio_set_dir(colPins[i], GPIO_OUT); // Set as OUTPUT
 	}
 	for (int i = 0; i < rowLength; i++) {
 		gpio_init(rowPins[i]);				// Initialize pin
@@ -38,6 +38,7 @@ void MatrixInput::preprocess() {
 
 	if (matrixOptions.rows == 0 || matrixOptions.cols == 0) return;
 
+	const uint8_t* layout = reinterpret_cast<const uint8_t*> (matrixOptions.layout.bytes);
 	const uint8_t* colPins = reinterpret_cast<const uint8_t*>
 		((matrixOptions.reverseDiode ? matrixOptions.rowPins.bytes : matrixOptions.colPins.bytes));
 	const uint8_t* rowPins = reinterpret_cast<const uint8_t*>
@@ -52,7 +53,7 @@ void MatrixInput::preprocess() {
 	for (int col = 0; col < colLength; col++) {
 		gpio_put(colPins[col], 0);
 		for (int row = 0; row < rowLength; row++) {
-			if (!gpio_get(rowPins[row])) values |= 1 << pressed;
+			if (!gpio_get(rowPins[row])) values |= 1 << layout[pressed];
 			pressed++;
 		}
 		gpio_put(colPins[col], 1);
@@ -60,30 +61,30 @@ void MatrixInput::preprocess() {
 	}
 
 	gamepad->state.aux = 0
-		| (values & (1 << pinMappings.pinButtonFn)) ? AUX_MASK_FUNCTION : 0;
+		| (values & (1 << MATRIX_BUTTON_FN)) ? AUX_MASK_FUNCTION : 0;
 
 	gamepad->state.dpad = 0
-		| ((values & gamepad->mapDpadUp->pinMask)    ? gamepad->mapDpadUp->buttonMask    : 0)
-		| ((values & gamepad->mapDpadDown->pinMask)  ? gamepad->mapDpadDown->buttonMask  : 0)
-		| ((values & gamepad->mapDpadLeft->pinMask)  ? gamepad->mapDpadLeft->buttonMask  : 0)
-		| ((values & gamepad->mapDpadRight->pinMask) ? gamepad->mapDpadRight->buttonMask : 0)
+		| ((values & (1 << MATRIX_DPAD_UP))    ? gamepad->mapDpadUp->buttonMask    : 0)
+		| ((values & (1 << MATRIX_DPAD_DOWN))  ? gamepad->mapDpadDown->buttonMask  : 0)
+		| ((values & (1 << MATRIX_DPAD_LEFT))  ? gamepad->mapDpadLeft->buttonMask  : 0)
+		| ((values & (1 << MATRIX_DPAD_RIGHT)) ? gamepad->mapDpadRight->buttonMask : 0)
 	;
 
 	gamepad->state.buttons = 0
-		| ((values & gamepad->mapButtonB1->pinMask)  ? gamepad->mapButtonB1->buttonMask  : 0)
-		| ((values & gamepad->mapButtonB2->pinMask)  ? gamepad->mapButtonB2->buttonMask  : 0)
-		| ((values & gamepad->mapButtonB3->pinMask)  ? gamepad->mapButtonB3->buttonMask  : 0)
-		| ((values & gamepad->mapButtonB4->pinMask)  ? gamepad->mapButtonB4->buttonMask  : 0)
-		| ((values & gamepad->mapButtonL1->pinMask)  ? gamepad->mapButtonL1->buttonMask  : 0)
-		| ((values & gamepad->mapButtonR1->pinMask)  ? gamepad->mapButtonR1->buttonMask  : 0)
-		| ((values & gamepad->mapButtonL2->pinMask)  ? gamepad->mapButtonL2->buttonMask  : 0)
-		| ((values & gamepad->mapButtonR2->pinMask)  ? gamepad->mapButtonR2->buttonMask  : 0)
-		| ((values & gamepad->mapButtonS1->pinMask)  ? gamepad->mapButtonS1->buttonMask  : 0)
-		| ((values & gamepad->mapButtonS2->pinMask)  ? gamepad->mapButtonS2->buttonMask  : 0)
-		| ((values & gamepad->mapButtonL3->pinMask)  ? gamepad->mapButtonL3->buttonMask  : 0)
-		| ((values & gamepad->mapButtonR3->pinMask)  ? gamepad->mapButtonR3->buttonMask  : 0)
-		| ((values & gamepad->mapButtonA1->pinMask)  ? gamepad->mapButtonA1->buttonMask  : 0)
-		| ((values & gamepad->mapButtonA2->pinMask)  ? gamepad->mapButtonA2->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_B1))  ? gamepad->mapButtonB1->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_B2))  ? gamepad->mapButtonB2->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_B3))  ? gamepad->mapButtonB3->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_B4))  ? gamepad->mapButtonB4->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_L1))  ? gamepad->mapButtonL1->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_R1))  ? gamepad->mapButtonR1->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_L2))  ? gamepad->mapButtonL2->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_R2))  ? gamepad->mapButtonR2->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_S1))  ? gamepad->mapButtonS1->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_S2))  ? gamepad->mapButtonS2->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_L3))  ? gamepad->mapButtonL3->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_R3))  ? gamepad->mapButtonR3->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_A1))  ? gamepad->mapButtonA1->buttonMask  : 0)
+		| ((values & (1 << MATRIX_BUTTON_A2))  ? gamepad->mapButtonA2->buttonMask  : 0)
 	;
 
 	gamepad->state.lx = GAMEPAD_JOYSTICK_MID;
