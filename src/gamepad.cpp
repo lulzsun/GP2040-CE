@@ -95,6 +95,7 @@ void Gamepad::setup()
 {
 	// Configure pin mapping
 	const PinMappings& pinMappings = Storage::getInstance().getProfilePinMappings();
+	const GamepadOptions& gamepadOptions = Storage::getInstance().getGamepadOptions();
 
 	const auto convertPin = [](int32_t pin) -> uint8_t { return isValidPin(pin) ? pin : 0xff; };
 	mapDpadUp    = new GamepadButtonMapping(convertPin(pinMappings.pinDpadUp),		GAMEPAD_MASK_UP);
@@ -125,9 +126,6 @@ void Gamepad::setup()
 		mapButtonA1, mapButtonA2
 	};
 
-	const bool matrixEnabled = Storage::getInstance().getAddonOptions().matrixOptions.enabled;
-	if (matrixEnabled) return;
-
 	for (int i = 0; i < GAMEPAD_DIGITAL_INPUT_COUNT; i++)
 	{
 		if (gamepadMappings[i]->isAssigned())
@@ -152,18 +150,16 @@ void Gamepad::setup()
 void Gamepad::teardown_and_reinit(const uint32_t profileNum)
 {
 	const PinMappings& pinMappings = Storage::getInstance().getProfilePinMappings();
-	const bool matrixEnabled = Storage::getInstance().getAddonOptions().matrixOptions.enabled;
-
-	if (!matrixEnabled) {
-		// deinitialize the GPIO pins so we don't have orphans
-		for (int i = 0; i < GAMEPAD_DIGITAL_INPUT_COUNT; i++) {
-			if (gamepadMappings[i]->isAssigned()) {
-				gpio_deinit(gamepadMappings[i]->pin);
-			}
+	// deinitialize the GPIO pins so we don't have orphans
+	for (int i = 0; i < GAMEPAD_DIGITAL_INPUT_COUNT; i++)
+	{
+		if (gamepadMappings[i]->isAssigned())
+		{
+			gpio_deinit(gamepadMappings[i]->pin);
 		}
-		if (isValidPin(pinMappings.pinButtonFn)) {
-			gpio_deinit(pinMappings.pinButtonFn);
-		}
+	}
+	if (isValidPin(pinMappings.pinButtonFn)) {
+		gpio_deinit(pinMappings.pinButtonFn);
 	}
 
 	// set to new profile
@@ -242,9 +238,6 @@ void Gamepad::process()
 
 void Gamepad::read()
 {
-	const bool matrixEnabled = Storage::getInstance().getAddonOptions().matrixOptions.enabled;
-	if (matrixEnabled) return;
-
 	const PinMappings& pinMappings = Storage::getInstance().getProfilePinMappings();
 	// Need to invert since we're using pullups
 	uint32_t values = ~gpio_get_all();
